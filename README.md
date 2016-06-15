@@ -1,6 +1,6 @@
 # NSH / VxLAN Tool
 
-This was started with a copy of https://github.com/opendaylight/sfc/blob/master/sfc-test/nsh-tools/vxlan_tool.py written by Yi Yang and Reinaldo Penno
+This is a modified version of https://github.com/opendaylight/sfc/blob/master/sfc-test/nsh-tools/vxlan_tool.py written by Yi Yang and Reinaldo Penno
 
 This code was modified to
 
