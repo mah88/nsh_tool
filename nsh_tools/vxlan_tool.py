@@ -860,9 +860,9 @@ def main():
             # Added by Ahmed
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
             if (args.block_dst_port != 0):
-                myipheader =  Inner_IP4HEADER()
-                decode_inner_ip(packet,myipheader)
-                if(myipheader.ip_proto == 6):
+              #  myipheader =  Inner_IP4HEADER()
+              #  decode_inner_ip(packet,myipheader)
+              #  if(myipheader.ip_proto == 6):
                     mytcpheader = Inner_TCPHEADER()
                     decode_inner_tcp(packet,mytcpheader)
                     if (mytcpheader.tcp_dport == args.block_dst_port):
@@ -870,14 +870,14 @@ def main():
                         continue
                     else:
                         print "Not the required destination Port"
-                elif(myipheader.ip_proto == 17):
-                    myudpheader = Inner_UDPHEADER()
-                    decode_inner_udp(packet,myudpheader)
-                    if (myudpheader.udp_dport == args.block_dst_port):
-                        print bcolors.WARNING + "UDP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
-                        continue
-                    else:
-                        print "Not the required destination Port"
+             #   elif(myipheader.ip_proto == 17):
+             #       myudpheader = Inner_UDPHEADER()
+             #       decode_inner_udp(packet,myudpheader)
+             #       if (myudpheader.udp_dport == args.block_dst_port):
+             #           print bcolors.WARNING + "UDP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
+             #           continue
+             #       else:
+             #           print "Not the required destination Port"
             """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
             if (args.block_src_ip != ""):
                 myipheader =  Inner_IP4HEADER()
