@@ -877,7 +877,7 @@ def main():
                     if (myudpheader.udp_dport == args.block_dst_port):
                         print bcolors.WARNING + "UDP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
                         continue
-                     else:
+                    else:
                         args.block_dst_port=0
                         print "Not the required destination Port"
             """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
@@ -888,7 +888,7 @@ def main():
                 if (socket.inet_ntoa(pack('!I', myipheader.ip_saddr)) == args.block_src_ip):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
                     continue
-                 else:
+                else:
                     args.block_src_ip = ""
                     print "Not the required source IP"
                    
