@@ -565,8 +565,8 @@ def main():
                         help='dump packets when in forward mode')
     parser.add_argument('--block_dst_port', '-bp', type=int, default=0,
                         help='Acts as a firewall dropping packets that match this TCP/UDP dst port')
-   # parser.add_argument('--block_src_ip', '-bs', type=int, default=0,
-    #                    help='Acts as a firewall dropping packets that match this src ip')
+    parser.add_argument('--block_src_ip', '-bs', type=int, default=0,
+                       help='Acts as a firewall dropping packets that match this src ip')
     args = parser.parse_args()
     macaddr = None
 
@@ -858,7 +858,7 @@ def main():
             if (do_print):
                 print_nsh_contextheader(mynshcontextheader)
             # Added by Ahmed
-            """ Check if Firewall checking is enabled, and block/drop if its the same dst port """
+            """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
             if (args.block_dst_port != 0):
                 myipheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet,myipheader)
@@ -874,6 +874,13 @@ def main():
                     if (myudpheader.udp_dport == args.block_dst_port):
                         print bcolors.WARNING + "UDP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
                         continue
+            """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
+            if (args.block_src_ip != 0):
+                myipheader =  Inner_IP4HEADER()
+                decode_inner_ip(packet,myipheader)
+                    if (myipheader.ip_saddr == args.block_src_ip):
+                        print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
+                        continue   
                    
                 
             if ((args.do == "forward") and (args.interface is not None) and (mynshbaseheader.service_index > 1)):
