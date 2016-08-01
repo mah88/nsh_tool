@@ -347,6 +347,8 @@ def decode_nsh_contextheader(payload, offset, nsh_context_header_values):
     
 #Added by Ahmed to support parsing original 
 def decode_inner_tcp(payload, in_tcp_header_values):
+    """Decode the inner TCP headers for a received packet"""
+
     in_tcp_header = payload[108:116]
 
     _header_values = unpack('!H H H H', in_tcp_header)
@@ -356,6 +358,8 @@ def decode_inner_tcp(payload, in_tcp_header_values):
     in_tcp_header_values.tcp_sum = _header_values[3]
     
 def decode_inner_udp(payload, in_udp_header_values):
+    """Decode the inner UDP headers for a received packet"""
+
     in_udp_header = payload[108:116]
 
     _header_values = unpack('!H H H H', in_udp_header)
@@ -365,6 +369,8 @@ def decode_inner_udp(payload, in_udp_header_values):
     in_udp_header_values.udp_sum = _header_values[3]
     
 def decode_inner_ip(payload, in_ip_header_values):
+    """Decode the inner IP headers for a received packet"""
+
     in_ip_header = payload[88:108]
 
     _header_values = unpack('!B B H H H B B H I I', in_ip_header)
@@ -559,8 +565,8 @@ def main():
                         help='dump packets when in forward mode')
     parser.add_argument('--block_dst_port', '-bp', type=int, default=0,
                         help='Acts as a firewall dropping packets that match this TCP/UDP dst port')
-    parser.add_argument('--block_src_ip', '-bs', type=int, default=0,
-                        help='Acts as a firewall dropping packets that match this src ip')
+   # parser.add_argument('--block_src_ip', '-bs', type=int, default=0,
+    #                    help='Acts as a firewall dropping packets that match this src ip')
     args = parser.parse_args()
     macaddr = None
 
@@ -856,13 +862,13 @@ def main():
             if (args.block_dst_port != 0):
                 myipheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet,myipheader)
-                if(myipheader.ipproto == 6)
+                if(myipheader.ip_proto == 6):
                     mytcpheader = Inner_TCPHEADER()
                     decode_inner_tcp(packet,mytcpheader)
                     if (mytcpheader.tcp_dport == args.block_dst_port):
                         print bcolors.WARNING + "TCP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
                         continue   
-                elif(myipheader.ipproto == 17)
+                elif(myipheader.ip_proto == 17):
                     myudpheader = Inner_UDPHEADER()
                     decode_inner_udp(packet,myudpheader)
                     if (myudpheader.udp_dport == args.block_dst_port):
