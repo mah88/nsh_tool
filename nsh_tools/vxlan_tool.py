@@ -17,6 +17,7 @@ import argparse
 from struct import *
 from ctypes import Structure, c_ubyte, c_ushort, c_uint
 
+
 NSH_TYPE1_LEN = 0x6
 NSH_MD_TYPE1 = 0x1
 NSH_VERSION1 = int('00', 2)
@@ -34,6 +35,17 @@ IPV4_TOS = 0
 IPV4_IHL_VER = (IPV4_VERSION << 4) + IP_HEADER_LEN
 
 UDP_HEADER_LEN_BYTES = 8
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+ 
 
 class VXLAN(Structure):
     _fields_ = [('flags', c_ubyte),
@@ -208,6 +220,46 @@ class PSEUDO_UDPHEADER(Structure):
         p_udp_header_pack = pack('!I I B B H', self.src_ip, self.dest_ip,
                                  self.zeroes, self.protocol, self.length)
         return p_udp_header_pack
+#Added by Ahmed for parsing the original packet
+class Inner_IP4HEADER(Structure):
+    _fields_ = [
+        ('ip_ihl', c_ubyte),
+        ('ip_ver', c_ubyte),
+        ('ip_tos', c_ubyte),
+        ('ip_tot_len', c_ushort),
+        ('ip_id', c_ushort),
+        ('ip_frag_offset', c_ushort),
+        ('ip_ttl', c_ubyte),
+        ('ip_proto', c_ubyte),
+        ('ip_chksum', c_ushort),
+        ('ip_saddr', c_uint),
+        ('ip_daddr', c_uint)]
+
+    header_size = 20
+    
+class Inner_TCPHEADER(Structure):
+    """
+    Represents Original Packet TCP header
+    """
+    _fields_ = [
+        ('tcp_sport', c_ushort),
+        ('tcp_dport', c_ushort),
+        ('tcp_len', c_ushort),
+        ('tcp_sum', c_ushort)]
+
+    header_size = 8
+
+class Inner_UDPHEADER(Structure):
+    """
+    Represents Original Pakcet UDP header
+    """
+    _fields_ = [
+        ('udp_sport', c_ushort),
+        ('udp_dport', c_ushort),
+        ('udp_len', c_ushort),
+        ('udp_sum', c_ushort)]
+
+    header_size = 8
 
 def decode_eth(payload, eth_header_values):
     eth_header = payload[0:14]
@@ -291,8 +343,43 @@ def decode_nsh_contextheader(payload, offset, nsh_context_header_values):
     nsh_context_header_values.network_platform = _header_values[0]
     nsh_context_header_values.network_shared = _header_values[1]
     nsh_context_header_values.service_platform = _header_values[2]
-    nsh_context_header_values.service_shared = _header_values[3]
+    nsh_context_header_values.service_shared = _header_values
+    
+#Added by Ahmed to support parsing original 
+def decode_inner_tcp(payload, in_tcp_header_values):
+    in_tcp_header = payload[108:116]
 
+    _header_values = unpack('!H H H H', in_tcp_header)
+    in_tcp_header_values.tcp_sport = _header_values[0]
+    in_tcp_header_values.tcp_dport = _header_values[1]
+    in_tcp_header_values.tcp_len = _header_values[2]
+    in_tcp_header_values.tcp_sum = _header_values[3]
+    
+def decode_inner_udp(payload, in_udp_header_values):
+    in_udp_header = payload[108:116]
+
+    _header_values = unpack('!H H H H', in_udp_header)
+    in_udp_header_values.udp_sport = _header_values[0]
+    in_udp_header_values.udp_dport = _header_values[1]
+    in_udp_header_values.udp_len = _header_values[2]
+    in_udp_header_values.udp_sum = _header_values[3]
+    
+def decode_inner_ip(payload, in_ip_header_values):
+    in_ip_header = payload[88:108]
+
+    _header_values = unpack('!B B H H H B B H I I', in_ip_header)
+    in_ip_header_values.ip_ihl = _header_values[0] & 0x0F
+    in_ip_header_values.ip_ver = _header_values[0] >> 4
+    in_ip_header_values.ip_tos = _header_values[1]
+    in_ip_header_values.ip_tot_len = _header_values[2]
+    in_ip_header_values.ip_id = _header_values[3]
+    in_ip_header_values.ip_frag_offset = _header_values[4]
+    in_ip_header_values.ip_ttl = _header_values[5]
+    in_ip_header_values.ip_proto = _header_values[6]
+    in_ip_header_values.ip_chksum = _header_values[7]
+    in_ip_header_values.ip_saddr = _header_values[8]
+    in_ip_header_values.ip_daddr = _header_values[9]
+    
 def compute_internet_checksum(data):
     """
     Function for Internet checksum calculation. Works
@@ -470,6 +557,10 @@ def main():
                         help="won't swap ip if provided")
     parser.add_argument('-v', '--verbose', choices=['on', 'off'],
                         help='dump packets when in forward mode')
+    parser.add_argument('--block_dst_port', '-bp', type=int, default=0,
+                        help='Acts as a firewall dropping packets that match this TCP/UDP dst port')
+    parser.add_argument('--block_src_ip', '-bs', type=int, default=0,
+                        help='Acts as a firewall dropping packets that match this src ip')
     args = parser.parse_args()
     macaddr = None
 
@@ -760,7 +851,25 @@ def main():
             """ Print NSH context header """
             if (do_print):
                 print_nsh_contextheader(mynshcontextheader)
-
+            # Added by Ahmed
+            """ Check if Firewall checking is enabled, and block/drop if its the same dst port """
+            if (args.block_dst_port != 0):
+                myipheader =  Inner_IP4HEADER()
+                decode_inner_ip(packet,myipheader)
+                if(myipheader.ipproto == 6)
+                    mytcpheader = Inner_TCPHEADER()
+                    decode_inner_tcp(packet,mytcpheader)
+                    if (mytcpheader.tcp_dport == args.block_dst_port):
+                        print bcolors.WARNING + "TCP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
+                        continue   
+                elif(myipheader.ipproto == 17)
+                    myudpheader = Inner_UDPHEADER()
+                    decode_inner_udp(packet,myudpheader)
+                    if (myudpheader.udp_dport == args.block_dst_port):
+                        print bcolors.WARNING + "UDP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
+                        continue
+                   
+                
             if ((args.do == "forward") and (args.interface is not None) and (mynshbaseheader.service_index > 1)):
                 """ Build IP packet"""
                 if (myudpheader.udp_dport in vxlan_gpe_udp_ports):
