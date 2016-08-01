@@ -878,8 +878,8 @@ def main():
             if (args.block_src_ip != ""):
                 myipheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet,myipheader)
-                print "The Original Source IP is : " + str(myipheader.ip_saddr) +" and the Args IP is : "+ str(args.block_src_ip)    
-                if (myipheader.ip_saddr == args.block_src_ip):
+                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                if (socket.inet_ntoa(pack('!I', myipheader.ip_saddr)) == args.block_src_ip):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
                     continue   
                    
