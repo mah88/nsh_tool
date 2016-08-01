@@ -869,7 +869,6 @@ def main():
                         print bcolors.WARNING + "TCP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
                         continue
                     else:
-                        args.block_dst_port=0
                         print "Not the required destination Port"
                 elif(myipheader.ip_proto == 17):
                     myudpheader = Inner_UDPHEADER()
@@ -878,7 +877,6 @@ def main():
                         print bcolors.WARNING + "UDP packet dropped on port: " + str(args.block_dst_port) + bcolors.ENDC
                         continue
                     else:
-                        args.block_dst_port=0
                         print "Not the required destination Port"
             """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
             if (args.block_src_ip != ""):
@@ -889,7 +887,6 @@ def main():
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
                     continue
                 else:
-                    args.block_src_ip = ""
                     print "Not the required source IP"
                    
                 
