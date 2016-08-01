@@ -889,7 +889,8 @@ def main():
                 else:
                     print "Not the required source IP"
                    
-                
+            print "Continue Sending packet"
+    
             if ((args.do == "forward") and (args.interface is not None) and (mynshbaseheader.service_index > 1)):
                 """ Build IP packet"""
                 if (myudpheader.udp_dport in vxlan_gpe_udp_ports):
@@ -907,6 +908,7 @@ def main():
 
                 """ Send it and make sure all the data is sent out """
                 while pkt:
+                    print "Packet is sent out"
                     sent = send_s.send(pkt)
                     pkt = pkt[sent:]
 
