@@ -343,7 +343,7 @@ def decode_nsh_contextheader(payload, offset, nsh_context_header_values):
     nsh_context_header_values.network_platform = _header_values[0]
     nsh_context_header_values.network_shared = _header_values[1]
     nsh_context_header_values.service_platform = _header_values[2]
-    nsh_context_header_values.service_shared = _header_values
+    nsh_context_header_values.service_shared = _header_values[3]
     
 #Added by Ahmed to support parsing original 
 def decode_inner_tcp(payload, in_tcp_header_values):
