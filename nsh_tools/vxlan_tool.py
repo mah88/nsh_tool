@@ -902,14 +902,23 @@ def main():
                     print "Not the required source IP"
             """ Check if Parental Control is enabled, and block/drop if its the same dst port """
             if (args.parental_control=="x"):
-                if "sex" in packet[116:]:                   
+                found=False
+                key_words=["sex","porn","fuck"]
+                if any(word in packet[116:] for word in key_words:
+                #if "sex" in packet[116:]:                   
                     print "The word found is : " + packet[116:]
+                    found=True;
+                    break
                     #continue
-                    mod_data=packet[116:].replace('sex','***')
-                    mod_packet=packet[:116]+mod_data
+                    #mod_data=packet[116:].replace('sex','***')
+                    #mod_packet=packet[:116]+mod_data
                    #packet[140:]=packet[140:].join('****')
                 else:
                     mod_packet=packet
+                    
+                if (found==True):
+                    continue
+                
             print "Continue Sending packet"
     
             if ((args.do == "forward") and (args.interface is not None) and (mynshbaseheader.service_index > 1)):
