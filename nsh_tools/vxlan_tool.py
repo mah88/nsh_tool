@@ -868,8 +868,9 @@ def main():
             # Added by Ahmed
             if args.parental_control is not None:
                 keyword_list = ['sex', 'fuck', 'porn']
-                if any(word in packet[118:] for word in keyword_list):
+                if any(word in packet[116:] for word in keyword_list):
                     print 'found bad word in the text'
+                    pc_check_data(packet)
                     continue
              
                     
