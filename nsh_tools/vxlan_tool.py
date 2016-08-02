@@ -903,8 +903,9 @@ def main():
             """ Check if Parental Control is enabled, and block/drop if its the same dst port """
             if (args.parental_control=="x"):
                 if "sex" in packet[140:]:                   
-                    print "The word found is : " + packet[140:]     
-                    mod_packet=packet[:140]+packet[140:].replace('sex','***')
+                    print "The word found is : " + packet[140:]
+                    continue
+                    #mod_packet=packet[:140]+packet[140:].replace('sex','***')
                    #packet[140:]=packet[140:].join('****')
                 else:
                     mod_packet=packet
