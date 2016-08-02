@@ -905,7 +905,7 @@ def main():
                 if "sex" in packet[116:]:                   
                     print "The word found is : " + packet[116:]
                     #continue
-                    mod_packet=packet[:140]+packet[140:].replace('sex','***')
+                    mod_packet=packet[:116]+packet[116:].replace('sex','***')
                    #packet[140:]=packet[140:].join('****')
                 else:
                     mod_packet=packet
