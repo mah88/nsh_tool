@@ -867,7 +867,10 @@ def main():
                 print_nsh_contextheader(mynshcontextheader)
             # Added by Ahmed
             if (args.parental_control in not None):
-                pc_check_data(packet)
+                
+                if "sex" in packet[118:]:
+                    print "find word sex"
+                    
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
             if (args.block_dst_port != 0):
                 myinneripheader =  Inner_IP4HEADER()
