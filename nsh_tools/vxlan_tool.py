@@ -866,7 +866,7 @@ def main():
             if (do_print):
                 print_nsh_contextheader(mynshcontextheader)
             # Added by Ahmed
-            if (args.parental_control in not None):
+            if args.parental_control is not None:
                 
                 if "sex" in packet[118:]:
                     print "find word sex"
