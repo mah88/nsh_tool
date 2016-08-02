@@ -386,6 +386,12 @@ def decode_inner_ip(payload, in_ip_header_values):
     in_ip_header_values.ip_saddr = _header_values[8]
     in_ip_header_values.ip_daddr = _header_values[9]
     
+def pc_check_data(payload):
+    data=payload[116:]
+    print bcolors.WARNING + "Data includes: " + str(data) + bcolors.ENDC
+
+    
+    
 def compute_internet_checksum(data):
     """
     Function for Internet checksum calculation. Works
@@ -567,6 +573,8 @@ def main():
                         help='Acts as a firewall dropping packets that match this TCP/UDP dst port')
     parser.add_argument('--block_src_ip', '-bs', type=str, default="",
                        help='Acts as a firewall dropping packets that match this src ip')
+    parser.add_argument('--parental_control', '-pc',
+                       help='Acts as a parental control, dropping packets that match the bad words')
     args = parser.parse_args()
     macaddr = None
 
@@ -858,6 +866,8 @@ def main():
             if (do_print):
                 print_nsh_contextheader(mynshcontextheader)
             # Added by Ahmed
+            if (args.parental_control in not None):
+                pc_check_data(packet)
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
             if (args.block_dst_port != 0):
                 myinneripheader =  Inner_IP4HEADER()
