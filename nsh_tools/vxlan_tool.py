@@ -871,15 +871,14 @@ def main():
             # Added by Ahmed
             if args.parental_control is not None:
                 keyword_list = ["sex", "fuck", "porn"]
-                found=False
-                if any(word in packet[116:] for word in keyword_list):
-                    found=True
-                    print 'found bad word in the text'
-                    
-                if(found==True):
+                
+                if "sex" in packet[116:]:
                     continue
-             
-                    
+                if "fuck" in packet[116:]:
+                    continue
+                if "porn" in packet[116:]:
+                    continue    
+                
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
             if (args.block_dst_port != 0):
                 myinneripheader =  Inner_IP4HEADER()
