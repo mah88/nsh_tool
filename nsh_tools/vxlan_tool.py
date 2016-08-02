@@ -577,7 +577,7 @@ def main():
     parser.add_argument('--block_src_ip', '-bs', type=str, default="",
                        help='Acts as a firewall dropping packets that match this src ip')
     parser.add_argument('--parental_control', '-pc',
-                       help='Acts as a parental control, dropping packets that match the bad words')
+                       help='Acts as a parental control, dropping messages that contain +18 words')
     args = parser.parse_args()
     macaddr = None
 
@@ -900,24 +900,21 @@ def main():
                     continue
                 else:
                     print "Not the required source IP"
+                    
             """ Check if Parental Control is enabled, and block/drop if its the same dst port """
             if (args.parental_control=="x"):
-                found=False
                 key_words=["sex","porn","fuck"]
                 if any(word in packet[116:] for word in key_words:
                 #if "sex" in packet[116:]:                   
-                    print "The word found is : " + packet[116:]
-                    found=True;
-                    break
+                    print "This message >> " + packet[116:] +" << will be dropped because it contains +18 words"
+                    continue
                     #continue
                     #mod_data=packet[116:].replace('sex','***')
                     #mod_packet=packet[:116]+mod_data
                    #packet[140:]=packet[140:].join('****')
                 else:
                     mod_packet=packet
-                    
-                if (found==True):
-                    continue
+
                 
             print "Continue Sending packet"
     
