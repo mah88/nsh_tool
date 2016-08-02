@@ -901,9 +901,9 @@ def main():
                 else:
                     print "Not the required source IP"
             """ Check if Parental Control is enabled, and block/drop if its the same dst port """
-            if args.parental_control is not None:
+            if (args.parental_control=="x"):
                 if "sex" in packet[140:]:                   
-                    print "The word found is : " + mod_packet[140:]     
+                    print "The word found is : " + packet[140:]     
                     mod_packet=packet[:140]+packet[140:].replace('sex','***')
                    #packet[140:]=packet[140:].join('****')
                 else:
@@ -930,6 +930,8 @@ def main():
                     print "Packet is sent out"
                     sent = send_s.send(pkt)
                     pkt = pkt[sent:]
+                    print "Packet: "+str(pkt[140:])
+
 
 if __name__ == "__main__":
     main()
