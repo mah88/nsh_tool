@@ -869,15 +869,7 @@ def main():
             if (do_print):
                 print_nsh_contextheader(mynshcontextheader)
             # Added by Ahmed
-            """ Check if Parental Control is enabled, and block/drop if its the same dst port """
-            if args.parental_control is not None:
-                if "sex" in packet[140:]:
-                   #packet[140:]=packet[140:].replace('sex','****')
-                   packet[140:]=packet[140:].join('****')
-                   print "The word found is : " + packet[140:]
-                  
-         
-                
+
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
             if (args.block_dst_port != 0):
                 myinneripheader =  Inner_IP4HEADER()
@@ -908,7 +900,14 @@ def main():
                     continue
                 else:
                     print "Not the required source IP"
-                   
+            """ Check if Parental Control is enabled, and block/drop if its the same dst port """
+            if args.parental_control is not None:
+                if "sex" in packet[140:]:
+                   mod_packet=packet[:140]+packet[140:].replace('sex','****')
+                   #packet[140:]=packet[140:].join('****')
+                   print "The word found is : " + mod_packet[140:]     
+                else:
+                    mod_packet=packet
             print "Continue Sending packet"
     
             if ((args.do == "forward") and (args.interface is not None) and (mynshbaseheader.service_index > 1)):
@@ -916,9 +915,9 @@ def main():
                 if (myudpheader.udp_dport in vxlan_gpe_udp_ports):
                     """ nsi minus one """
                     mynshbaseheader.service_index = mynshbaseheader.service_index - 1
-                    ippack = build_udp_packet(str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))), str(socket.inet_ntoa(pack('!I', myipheader.ip_daddr))), myudpheader.udp_sport, myudpheader.udp_dport, myvxlanheader.build() + mynshbaseheader.build() + mynshcontextheader.build() + packet[eth_length+ip_length+udp_length+vxlan_length+nshbase_length+nshcontext_length:], args.swap_ip)
+                    ippack = build_udp_packet(str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))), str(socket.inet_ntoa(pack('!I', myipheader.ip_daddr))), myudpheader.udp_sport, myudpheader.udp_dport, myvxlanheader.build() + mynshbaseheader.build() + mynshcontextheader.build() + mod_packet[eth_length+ip_length+udp_length+vxlan_length+nshbase_length+nshcontext_length:], args.swap_ip)
                 else:
-                    ippack = build_udp_packet(str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))), str(socket.inet_ntoa(pack('!I', myipheader.ip_daddr))), myudpheader.udp_sport, myudpheader.udp_dport, packet[eth_length+ip_length+udp_length:], args.swap_ip)
+                    ippack = build_udp_packet(str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))), str(socket.inet_ntoa(pack('!I', myipheader.ip_daddr))), myudpheader.udp_sport, myudpheader.udp_dport, mod_packet[eth_length+ip_length+udp_length:], args.swap_ip)
 
                 """ Build Ethernet header """
                 newethheader = build_ethernet_header_swap(myethheader)
