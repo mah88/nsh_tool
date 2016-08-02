@@ -872,7 +872,9 @@ def main():
             """ Check if Parental Control is enabled, and block/drop if its the same dst port """
             if args.parental_control is not None:
                 if "sex" in packet[116:]:
-                    packet[116:]=packet[116:].replace("sex","****")
+                   # packet[116:]=packet[116:].replace("sex","****")
+                   print "The word found is : " + packet[124:]
+                  
          
                 
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
