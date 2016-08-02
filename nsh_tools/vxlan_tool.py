@@ -874,9 +874,9 @@ def main():
                 
                 if "sex" in packet[116:]:
                     continue
-                if "fuck" in packet[116:]:
+                elif "fuck" in packet[116:]:
                     continue
-                if "porn" in packet[116:]:
+                elif "porn" in packet[116:]:
                     continue    
                 
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
