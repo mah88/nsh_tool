@@ -869,15 +869,11 @@ def main():
             if (do_print):
                 print_nsh_contextheader(mynshcontextheader)
             # Added by Ahmed
+            """ Check if Parental Control is enabled, and block/drop if its the same dst port """
             if args.parental_control is not None:
-                keyword_list = ["sex", "fuck", "porn"]
-                
                 if "sex" in packet[116:]:
                     continue
-                elif "fuck" in packet[116:]:
-                    continue
-                elif "porn" in packet[116:]:
-                    continue    
+         
                 
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
             if (args.block_dst_port != 0):
