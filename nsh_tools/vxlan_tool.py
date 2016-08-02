@@ -904,8 +904,8 @@ def main():
             if (args.parental_control=="x"):
                 if "sex" in packet[116:]:                   
                     print "The word found is : " + packet[116:]
-                    continue
-                    #mod_packet=packet[:140]+packet[140:].replace('sex','***')
+                    #continue
+                    mod_packet=packet[:140]+packet[140:].replace('sex','***')
                    #packet[140:]=packet[140:].join('****')
                 else:
                     mod_packet=packet
