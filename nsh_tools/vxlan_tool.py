@@ -867,9 +867,11 @@ def main():
                 print_nsh_contextheader(mynshcontextheader)
             # Added by Ahmed
             if args.parental_control is not None:
-                
-                if "sex" in packet[118:]:
-                    print "find word sex"
+                keyword_list = ['sex', 'fuck', 'porn']
+                if any(word in packet[118:] for word in keyword_list):
+                    print 'found  :'+ word+': in the text'
+                    continue
+             
                     
             """ Check if Firewall for destination port checking is enabled, and block/drop if its the same dst port """
             if (args.block_dst_port != 0):
