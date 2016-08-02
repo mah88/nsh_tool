@@ -386,9 +386,12 @@ def decode_inner_ip(payload, in_ip_header_values):
     in_ip_header_values.ip_saddr = _header_values[8]
     in_ip_header_values.ip_daddr = _header_values[9]
     
-def pc_check_data(payload):
+def pc_check_data(payload, keywords):
     data=payload[116:]
-    print bcolors.WARNING + "Data includes: " + str(data) + bcolors.ENDC
+   # for word in keywords:
+#        if word in data:
+#            found=true
+#    print bcolors.WARNING + "Data includes: " + str(data) + bcolors.ENDC
 
     
     
@@ -868,8 +871,12 @@ def main():
             # Added by Ahmed
             if args.parental_control is not None:
                 keyword_list = ["sex", "fuck", "porn"]
+                found=False
                 if any(word in packet[116:] for word in keyword_list):
                     print 'found bad word in the text'
+                    found=True
+                    break
+                if(found==True):
                     continue
              
                     
