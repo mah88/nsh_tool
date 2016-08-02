@@ -930,7 +930,7 @@ def main():
                     print "Packet is sent out"
                     sent = send_s.send(pkt)
                     pkt = pkt[sent:]
-                    print "Packet: "+str(pkt[140:])
+                    print "Packet: "+str(pkt)
 
 
 if __name__ == "__main__":
