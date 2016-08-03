@@ -904,7 +904,7 @@ def main():
             """ Check if Parental Control is enabled, and block/drop if its the same dst port """
             if (args.parental_control=="x"):
                 key_words=["sex","porn","fuck"]
-                if any(word in packet[116:] for word in key_words:
+                if any(word in packet[116:] for word in key_words):
                 #if "sex" in packet[116:]:                   
                     print "This message >> " + packet[116:] +" << will be dropped because it contains +18 words"
                     continue
