@@ -912,8 +912,7 @@ def main():
                     #mod_data=packet[116:].replace('sex','***')
                     #mod_packet=packet[:116]+mod_data
                    #packet[140:]=packet[140:].join('****')
-                else:
-                    mod_packet=packet
+              
 
                 
             print "Continue Sending packet"
@@ -923,9 +922,9 @@ def main():
                 if (myudpheader.udp_dport in vxlan_gpe_udp_ports):
                     """ nsi minus one """
                     mynshbaseheader.service_index = mynshbaseheader.service_index - 1
-                    ippack = build_udp_packet(str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))), str(socket.inet_ntoa(pack('!I', myipheader.ip_daddr))), myudpheader.udp_sport, myudpheader.udp_dport, myvxlanheader.build() + mynshbaseheader.build() + mynshcontextheader.build() + mod_packet[eth_length+ip_length+udp_length+vxlan_length+nshbase_length+nshcontext_length:], args.swap_ip)
+                    ippack = build_udp_packet(str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))), str(socket.inet_ntoa(pack('!I', myipheader.ip_daddr))), myudpheader.udp_sport, myudpheader.udp_dport, myvxlanheader.build() + mynshbaseheader.build() + mynshcontextheader.build() + packet[eth_length+ip_length+udp_length+vxlan_length+nshbase_length+nshcontext_length:], args.swap_ip)
                 else:
-                    ippack = build_udp_packet(str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))), str(socket.inet_ntoa(pack('!I', myipheader.ip_daddr))), myudpheader.udp_sport, myudpheader.udp_dport, mod_packet[eth_length+ip_length+udp_length:], args.swap_ip)
+                    ippack = build_udp_packet(str(socket.inet_ntoa(pack('!I', myipheader.ip_saddr))), str(socket.inet_ntoa(pack('!I', myipheader.ip_daddr))), myudpheader.udp_sport, myudpheader.udp_dport, packet[eth_length+ip_length+udp_length:], args.swap_ip)
 
                 """ Build Ethernet header """
                 newethheader = build_ethernet_header_swap(myethheader)
