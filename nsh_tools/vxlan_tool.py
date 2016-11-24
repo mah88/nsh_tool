@@ -894,7 +894,7 @@ def main():
             if (args.block_src_ip != ""):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet,myinneripheader)
-                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                #print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
                 if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
                     continue
@@ -915,7 +915,7 @@ def main():
               
 
                 
-            print "Continue Sending packet"
+            #print "Continue Sending packet"
     
             if ((args.do == "forward") and (args.interface is not None) and (mynshbaseheader.service_index > 1)):
                 """ Build IP packet"""
@@ -934,10 +934,10 @@ def main():
 
                 """ Send it and make sure all the data is sent out """
                 while pkt:
-                    print "Packet is sent out"
+                    #print "Packet is sent out"
                     sent = send_s.send(pkt)
                     pkt = pkt[sent:]
-                    print "Packet: "+str(pkt)
+                    #print "Packet: "+str(pkt)
 
 
 if __name__ == "__main__":
