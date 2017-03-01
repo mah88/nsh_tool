@@ -366,6 +366,7 @@ def compute_internet_checksum(data):
     """
     Function for Internet checksum calculation. Works
     for both IP and UDP.
+
     """
     checksum = 0
     n = len(data) % 2
