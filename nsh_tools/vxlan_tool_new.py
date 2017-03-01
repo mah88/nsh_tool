@@ -889,22 +889,12 @@ def main():
                     pkt = pkt[sent:]
                 continue
 
-        pktnum = pktnum + 1
-        if (do_print):
-            print("\n\nPacket #%d" % pktnum)
-
-        """ Print ethernet header """
-        if (do_print):
-            print_ethheader(myethheader)
 
         myipheader = IP4HEADER()
 
         """ Decode IP header """
         decode_ip(packet, myipheader)
 
-        """ Print IP header """
-        if (do_print):
-            print_ipheader(myipheader)
 
         if (myipheader.ip_proto != 17):
             continue
@@ -914,9 +904,6 @@ def main():
         """ Decode UDP header """
         decode_udp(packet, myudpheader)
 
-        """ Print UDP header """
-        if (do_print):
-            print_udpheader(myudpheader)
 
         if (myudpheader.udp_dport not in vxlan_udp_ports):
             continue
@@ -925,6 +912,23 @@ def main():
 
         """ Decode VxLAN/VxLAN-gpe header """
         decode_vxlan(packet, myvxlanheader)
+        
+        pktnum = pktnum + 1
+        if (do_print):
+            print("\n\nPacket #%d" % pktnum)
+
+        """ Print ethernet header """
+        if (do_print):
+            print_ethheader(myethheader)
+
+        """ Print IP header """
+        if (do_print):
+            print_ipheader(myipheader)
+
+        """ Print UDP header """
+        if (do_print):
+            print_udpheader(myudpheader)
+
 
         """ Print VxLAN/VxLAN-gpe header """
         if (do_print):
