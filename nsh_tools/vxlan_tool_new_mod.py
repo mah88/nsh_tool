@@ -869,6 +869,16 @@ def main():
                         bcolors.WARNING + "TCP packet dropped on port: " +
                         str(args.block) + bcolors.ENDC)
                     continue
+                    
+            """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
+            if (args.block_src_ip != ""):
+                myinneripheader =  Inner_IP4HEADER()
+                decode_inner_ip(packet,myinneripheader)
+                #print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip):
+                    print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
+                    continue
+            
 
             if ((args.do == "forward") and (args.interface is not None)):
                 """ nsi minus one for send """
