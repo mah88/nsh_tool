@@ -262,6 +262,24 @@ class TCPHEADER(Structure):
 
     header_size = 8
 
+#Added by Ahmed for parsing the original packet
+class Inner_IP4HEADER(Structure):
+    _fields_ = [
+        ('ip_ihl', c_ubyte),
+        ('ip_ver', c_ubyte),
+        ('ip_tos', c_ubyte),
+        ('ip_tot_len', c_ushort),
+        ('ip_id', c_ushort),
+        ('ip_frag_offset', c_ushort),
+        ('ip_ttl', c_ubyte),
+        ('ip_proto', c_ubyte),
+        ('ip_chksum', c_ushort),
+        ('ip_saddr', c_uint),
+        ('ip_daddr', c_uint)]
+
+header_size = 20
+
+################################################
 
 def decode_eth(payload, offset, eth_header_values):
     eth_header = payload[offset:(offset+14)]
@@ -319,6 +337,26 @@ def decode_tcp(payload, offset, tcp_header_values):
     tcp_header_values.tcp_len = _header_values[2]
     tcp_header_values.tcp_sum = _header_values[3]
 
+#Added by Ahmed to support parsing original 
+    
+def decode_inner_ip(payload, offset, in_ip_header_values):
+    """Decode the inner IP headers for a received packet"""
+
+    in_ip_header = payload[88+offset:108+offset]
+
+    _header_values = unpack('!B B H H H B B H I I', in_ip_header)
+    in_ip_header_values.ip_ihl = _header_values[0] & 0x0F
+    in_ip_header_values.ip_ver = _header_values[0] >> 4
+    in_ip_header_values.ip_tos = _header_values[1]
+    in_ip_header_values.ip_tot_len = _header_values[2]
+    in_ip_header_values.ip_id = _header_values[3]
+    in_ip_header_values.ip_frag_offset = _header_values[4]
+    in_ip_header_values.ip_ttl = _header_values[5]
+    in_ip_header_values.ip_proto = _header_values[6]
+    in_ip_header_values.ip_chksum = _header_values[7]
+    in_ip_header_values.ip_saddr = _header_values[8]
+    in_ip_header_values.ip_daddr = _header_values[9]
+#############################################################
 
 def decode_vxlan(payload, vxlan_header_values):
     """Decode the VXLAN header for a received packets"""
@@ -613,6 +651,10 @@ def main():
         '--block', '-b', type=int, default=0,
         help=('Acts as a firewall dropping packets '
               'that match this TCP dst port'))
+     parser.add_argument('--block_src_ip', '-bs', type=str, default="",
+        help='Acts as a firewall dropping packets that match this src ip')
+     parser.add_argument('--block_dst_ip', '-bd', type=str, default="",
+        help='Acts as a firewall dropping packets that match this dst ip')
 
     args = parser.parse_args()
     macaddr = None
@@ -871,15 +913,24 @@ def main():
                     continue
                     
             """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
-            if (args.block_src_ip != ""):
+            if (args.block_src_ip != "" && args.block_dst_ip == ""):
                 myinneripheader =  Inner_IP4HEADER()
-                decode_inner_ip(packet,myinneripheader)
-                #print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                decode_inner_ip(packet, 0, myinneripheader)
+                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
                 if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
                     continue
             
+            """ Check if Firewall for Source IP checking and destination IP checking are enabled together, and block/drop if its the same src ip and dst ip"""
+            if (args.block_src_ip != "" && args.block_dst_ip != ""):
+                myinneripheader =  Inner_IP4HEADER()
+                decode_inner_ip(packet, 0, myinneripheader)
+                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                print "The Original Destination IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr))) +" and the Args IP is : "+ str(args.block_dst_ip)    
 
+                if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip && socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip):
+                    print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) +" and destination IP: " + str(args.block_dst_ip)  + bcolors.ENDC
+                    continue
             if ((args.do == "forward") and (args.interface is not None)):
                 """ nsi minus one for send """
                 mynshbaseheader.service_index -= 1
@@ -982,7 +1033,27 @@ def main():
                         bcolors.WARNING + "TCP packet dropped on port: " +
                         str(args.block) + bcolors.ENDC)
                     continue
+                    
+            """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
+            if (args.block_src_ip != "" && args.block_dst_ip == ""):
+                myinneripheader =  Inner_IP4HEADER()
+                decode_inner_ip(packet, eth_length, myinneripheader)
+                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip):
+                    print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
+                    continue
+            
+            """ Check if Firewall for Source IP checking and destination IP checking are enabled together, and block/drop if its the same src ip and dst ip"""
+            if (args.block_src_ip != "" && args.block_dst_ip != ""):
+                myinneripheader =  Inner_IP4HEADER()
+                decode_inner_ip(packet, eth_length, myinneripheader)
+                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)   
+                print "The Original Destination IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr))) +" and the Args IP is : "+ str(args.block_dst_ip)    
 
+                if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip && socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip):
+                    print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) +" and destination IP: " + str(args.block_dst_ip)  + bcolors.ENDC
+                    continue
+                    
             if ((args.do == "forward") and
                (args.interface is not None) and
                (mynshbaseheader.service_index > 1)):
