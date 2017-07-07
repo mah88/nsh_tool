@@ -344,7 +344,7 @@ def decode_inner_ip(payload, offset, in_ip_header_values):
 
     in_ip_header = payload[88+offset:108+offset]
 
-    _header_values = unpack('!B B H H H B B H I I', in_ip_header)
+    _header_values = struct.unpack('!B B H H H B B H I I', in_ip_header)
     in_ip_header_values.ip_ihl = _header_values[0] & 0x0F
     in_ip_header_values.ip_ver = _header_values[0] >> 4
     in_ip_header_values.ip_tos = _header_values[1]
@@ -916,8 +916,8 @@ def main():
             if ((args.block_src_ip != "") and (args.block_dst_ip == "")):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet, 0, myinneripheader)
-                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
-                if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip):
+                #print "The Original Source IP is : " + str(socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                if (socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
                     continue
             
@@ -925,10 +925,10 @@ def main():
             if ((args.block_src_ip != "") and (args.block_dst_ip != "")):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet, 0, myinneripheader)
-                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
-                print "The Original Destination IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr))) +" and the Args IP is : "+ str(args.block_dst_ip)    
+                #print "The Original Source IP is : " + str(socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                #print "The Original Destination IP is : " + str(socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_daddr))) +" and the Args IP is : "+ str(args.block_dst_ip)    
 
-                if ((socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip) and (socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip)):
+                if ((socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip) and (socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip)):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) +" and destination IP: " + str(args.block_dst_ip)  + bcolors.ENDC
                     continue
             if ((args.do == "forward") and (args.interface is not None)):
@@ -1038,8 +1038,8 @@ def main():
             if ((args.block_src_ip != "") and (args.block_dst_ip == "")):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet, eth_length, myinneripheader)
-                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
-                if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip):
+                #print "The Original Source IP is : " + str(socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
+                if (socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) + bcolors.ENDC
                     continue
             
@@ -1047,10 +1047,10 @@ def main():
             if ((args.block_src_ip != "") and (args.block_dst_ip != "")):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet, eth_length, myinneripheader)
-                print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)   
-                print "The Original Destination IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr))) +" and the Args IP is : "+ str(args.block_dst_ip)    
+                #print "The Original Source IP is : " + str(socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)   
+                #print "The Original Destination IP is : " + str(socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_daddr))) +" and the Args IP is : "+ str(args.block_dst_ip)    
 
-                if ((socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip) and (socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip)):
+                if ((socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip) and (socket.inet_ntoa(struct.pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip)):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) +" and destination IP: " + str(args.block_dst_ip)  + bcolors.ENDC
                     continue
                     
