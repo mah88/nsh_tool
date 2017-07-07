@@ -651,9 +651,9 @@ def main():
         '--block', '-b', type=int, default=0,
         help=('Acts as a firewall dropping packets '
               'that match this TCP dst port'))
-     parser.add_argument('--block_src_ip', '-bs', type=str, default="",
+    parser.add_argument('--block_src_ip', '-bs', type=str, default="",
         help='Acts as a firewall dropping packets that match this src ip')
-     parser.add_argument('--block_dst_ip', '-bd', type=str, default="",
+    parser.add_argument('--block_dst_ip', '-bd', type=str, default="",
         help='Acts as a firewall dropping packets that match this dst ip')
 
     args = parser.parse_args()
