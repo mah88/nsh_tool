@@ -913,7 +913,7 @@ def main():
                     continue
                     
             """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
-            if (args.block_src_ip != "" && args.block_dst_ip == ""):
+            if ((args.block_src_ip != "") and (args.block_dst_ip == "")):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet, 0, myinneripheader)
                 print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
@@ -922,7 +922,7 @@ def main():
                     continue
             
             """ Check if Firewall for Source IP checking and destination IP checking are enabled together, and block/drop if its the same src ip and dst ip"""
-            if (args.block_src_ip != "" && args.block_dst_ip != ""):
+            if ((args.block_src_ip != "") and (args.block_dst_ip != "")):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet, 0, myinneripheader)
                 print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
@@ -1035,7 +1035,7 @@ def main():
                     continue
                     
             """ Check if Firewall for Source IP checking is enabled, and block/drop if its the same src ip """
-            if (args.block_src_ip != "" && args.block_dst_ip == ""):
+            if ((args.block_src_ip != "") and (args.block_dst_ip == "")):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet, eth_length, myinneripheader)
                 print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
@@ -1044,7 +1044,7 @@ def main():
                     continue
             
             """ Check if Firewall for Source IP checking and destination IP checking are enabled together, and block/drop if its the same src ip and dst ip"""
-            if (args.block_src_ip != "" && args.block_dst_ip != ""):
+            if ((args.block_src_ip != "") and (args.block_dst_ip != "")):
                 myinneripheader =  Inner_IP4HEADER()
                 decode_inner_ip(packet, eth_length, myinneripheader)
                 print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)   
