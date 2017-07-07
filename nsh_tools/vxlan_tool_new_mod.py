@@ -928,7 +928,7 @@ def main():
                 print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)    
                 print "The Original Destination IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr))) +" and the Args IP is : "+ str(args.block_dst_ip)    
 
-                if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip && socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip):
+                if ((socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip) and (socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip)):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) +" and destination IP: " + str(args.block_dst_ip)  + bcolors.ENDC
                     continue
             if ((args.do == "forward") and (args.interface is not None)):
@@ -1050,7 +1050,7 @@ def main():
                 print "The Original Source IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr))) +" and the Args IP is : "+ str(args.block_src_ip)   
                 print "The Original Destination IP is : " + str(socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr))) +" and the Args IP is : "+ str(args.block_dst_ip)    
 
-                if (socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip && socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip):
+                if ((socket.inet_ntoa(pack('!I', myinneripheader.ip_saddr)) == args.block_src_ip) and (socket.inet_ntoa(pack('!I', myinneripheader.ip_daddr)) == args.block_dst_ip)):
                     print bcolors.WARNING + "Packet dropped from source IP: " + str(args.block_src_ip) +" and destination IP: " + str(args.block_dst_ip)  + bcolors.ENDC
                     continue
                     
